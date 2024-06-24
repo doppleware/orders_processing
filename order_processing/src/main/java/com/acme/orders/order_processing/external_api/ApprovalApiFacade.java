@@ -30,11 +30,19 @@ public class ApprovalApiFacade implements ApprovalApi{
     public OrderApprovalRecord getApproval(String id) throws JSONException, IOException {
 
         var orderApproval = makeHttpCall(ORDERS_APPROVAL_URL + ORDER_APPROVAL_PATH +  id);
-        JSONObject obj = new JSONObject(orderApproval);
 
-        OrderApprovalRecord record =parseApprovalRecord(obj);
+        try {
+            JSONObject obj = new JSONObject(orderApproval);
+            OrderApprovalRecord record =parseApprovalRecord(obj);
 
-        return record;
+            return record;
+        }
+        catch (Exception e){
+            //
+        }
+
+
+        return null;
 
     }
 

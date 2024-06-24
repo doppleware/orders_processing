@@ -43,6 +43,7 @@ public class KafkaConfig
     public ConcurrentKafkaListenerContainerFactory<String, IncomingOrder> kafkaListenerContainerFactory() {
         ConcurrentKafkaListenerContainerFactory<String, IncomingOrder> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
+        factory.setConcurrency(30);
         return factory;
     }
 
