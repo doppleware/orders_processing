@@ -1,6 +1,7 @@
 package com.acme.orders.order_processing.external_api;
 
 import com.acme.orders.order_processing.dto.OrderApprovalRecord;
+import io.opentelemetry.api.trace.Span;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -8,7 +9,6 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.stereotype.Component;
-
 import java.io.IOException;
 
 @Component
@@ -28,6 +28,9 @@ public class ApprovalApiFacade implements ApprovalApi{
 
     @Override
     public OrderApprovalRecord getApproval(String id) throws JSONException, IOException {
+
+        Span span = Span.current();
+        span.setAttribute("Some Key", "Som value");
 
         var orderApproval = makeHttpCall(ORDERS_APPROVAL_URL + ORDER_APPROVAL_PATH +  id);
 

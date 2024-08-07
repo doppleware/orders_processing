@@ -1,4 +1,6 @@
 package com.acme.orders.order_processing;
+import com.acme.orders.order_contract.config.Constants;
+import com.acme.orders.order_contract.dto.ShipOrderMessage;
 import com.acme.orders.order_processing.domain.OrderRecord;
 import com.acme.orders.order_processing.domain.OrdersRepository;
 import com.acme.orders.order_processing.dto.IncomingOrder;
@@ -11,10 +13,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.UUID;
+
 
 @Component
 public class OrderProcessor {
@@ -30,6 +35,9 @@ public class OrderProcessor {
 
     @Autowired
     ApprovalApi approvalApi;
+
+    @Autowired
+    private KafkaTemplate<String, ShipOrderMessage> kafkaTemplate;
 
     @KafkaListener(topics = "incomingOrders")
     @Transactional
@@ -71,7 +79,18 @@ public class OrderProcessor {
 
 
         inTransitRepo.save(orderIT);
-        ordersRepo.save(new OrderRecord());
+        for (var entity : billingEntities){
+            OrderRecord orderRecord = new OrderRecord();
+            orderRecord.setName(entity);
+            ordersRepo.save(orderRecord);
+        }
+
+
+        ShipOrderMessage shipOrderMessage = new ShipOrderMessage();
+        shipOrderMessage.setOrderUid(UUID.randomUUID());
+        shipOrderMessage.setKey(UUID.randomUUID().toString());
+        shipOrderMessage.setShippingInfo("");
+        kafkaTemplate.send(Constants.SHIPPING_TOPIC, shipOrderMessage);
 
     }
 }
