@@ -5,8 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
-@Table(name = "order_contracts")
+@Table(name = "ORDER_CONTRACT")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,7 +18,18 @@ public class OrderContract {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String contractName;
-    private String details;
+    @ManyToOne(cascade = CascadeType.ALL)
+    private Customer customer;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<PurchaseItem> items;
+
+    @Embedded
+    private Shipping shipping;
+
+    @Embedded
+    private Payment payment;
+
+    private String status;
 
 }
