@@ -19,7 +19,7 @@ public class OrderMapper {
         return order;
     }
 
-    private Customer toCustomer(CustomerDto customerDto) {
+    private Customer toCustomer(Customer customerDto) {
         Customer customer = new Customer();
         customer.setName(customerDto.getName());
         customer.setEmail(customerDto.getEmail());
@@ -27,10 +27,10 @@ public class OrderMapper {
         return customer;
     }
 
-    private List<PurchaseItem> toItems(List<ItemDto> itemDtos) {
+    private List<OrderItem> toItems(List<OrderItem> itemDtos) {
         return itemDtos.stream()
                 .map(dto -> {
-                    PurchaseItem item = new PurchaseItem();
+                    OrderItem item = new OrderItem();
                     item.setProductName(dto.getProductName());
                     item.setQuantity(dto.getQuantity());
                     item.setPrice(dto.getPrice());
@@ -39,7 +39,7 @@ public class OrderMapper {
                 .collect(Collectors.toList());
     }
 
-    private Shipping toShipping(ShippingDto shippingDto) {
+    private Shipping toShipping(Shipping shippingDto) {
         Shipping shipping = new Shipping();
         shipping.setAddress(shippingDto.getAddress());
         shipping.setCity(shippingDto.getCity());
@@ -48,7 +48,7 @@ public class OrderMapper {
         return shipping;
     }
 
-    private Payment toPayment(PaymentDto paymentDto) {
+    private Payment toPayment(Payment paymentDto) {
         Payment payment = new Payment();
         payment.setMethod(paymentDto.getMethod());
         payment.setTransactionId(paymentDto.getTransactionId());

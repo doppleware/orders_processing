@@ -1,6 +1,5 @@
 package com.acme.orders.order_contract.dto;
 
-import com.acme.orders.order_contract.entity.Customer;
 import com.acme.orders.order_contract.entity.OrderItem;
 import com.acme.orders.order_contract.entity.Payment;
 import com.acme.orders.order_contract.entity.Shipping;
@@ -13,8 +12,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderRequest {
-    private Customer customer;
+public class UpdateOrderRequest {
     private List<OrderItem> items;
     private Shipping shipping;
     private Payment payment;

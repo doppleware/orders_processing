@@ -22,7 +22,7 @@ public class OrderContract {
     private Customer customer;
 
     @OneToMany(cascade = CascadeType.ALL)
-    private List<PurchaseItem> items;
+    private List<OrderItem> items;
 
     @Embedded
     private Shipping shipping;
