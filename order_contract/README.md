@@ -31,17 +31,25 @@ The Order Contract microservice is part of a larger system designed to handle or
 
     ```bash
     mvn clean install
+
 3.  **Run Application**
     ```bash
     mvn spring-boot:run
 
 4. **Accessing the HTML Interface**
 
-```bashOpen the HTML File
+    ```bash 
+    Open src/main/resources/static/index.html in your browser. This file provides a simple UI to submit orders.
+    Submit a Request
+    
+    Enter or edit the JSON data in the editor.
+    Click the "Submit Order" button to send the request to the API.
 
-Open src/main/resources/static/index.html in your browser. This file provides a simple UI to submit orders.
-
-Submit a Request
-
-Enter or edit the JSON data in the editor.
-Click the "Submit Order" button to send the request to the API.
+3.  **API Testing with Curl Files**
+    ```bash
+    * Ensure curl is installed on your machine.
+    * Run Application
+    1. bash create-order-contract.curl
+    2. bash get-order-contract-by-id.curl
+    3. bash update-order-contract.curl
+    4. bash delete-order-contract.curl
