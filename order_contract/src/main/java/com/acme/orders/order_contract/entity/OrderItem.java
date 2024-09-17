@@ -5,12 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
-@Table(name = "PURCHASE_ITEM")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Embeddable
+@Entity
+@Table(name = "ORDER_ITEM")
 public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,4 +18,8 @@ public class OrderItem {
     private String productName;
     private int quantity;
     private double price;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_contract_id")
+    private OrderContract orderContract;
 }
