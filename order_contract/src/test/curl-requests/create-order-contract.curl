@@ -1,0 +1,34 @@
+curl -X POST http://localhost:8081/api/orders-contracts/process \
+     -H "Content-Type: application/json" \
+     -d '{
+           "customer": {
+               "name": "John Doe",
+               "email": "john.doe@example.com",
+               "phoneNumber": "123-456-7890"
+           },
+           "items": [
+               {
+                   "productName": "Sample Item 1",
+                   "quantity": 1,
+                   "price": 19.99
+               },
+               {
+                   "productName": "Sample Item 2",
+                   "quantity": 2,
+                   "price": 29.99
+               }
+           ],
+           "shipping": {
+               "address": "123 Main St",
+               "city": "Anytown",
+               "postalCode": "12345",
+               "country": "USA"
+           },
+           "payment": {
+               "method": "Credit Card",
+               "cardNumber": "4111111111111111",
+               "expirationDate": "12/24",
+               "cvv": "123"
+           },
+           "status": "Pending"
+         }'

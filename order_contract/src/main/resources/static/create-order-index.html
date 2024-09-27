@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Order Contract</title>
+    <style>
+        #editor {
+            width: 100%;
+            height: 400px;
+            border: 1px solid #ccc;
+        }
+        .container {
+            margin: 20px;
+        }
+    </style>
+    <!-- Include Ace Editor from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.14/ace.js"></script>
+</head>
+<body>
+<div class="container">
+    <h1>Create Order Contract</h1>
+    <div id="editor"></div>
+    <button onclick="submitOrder()">Submit Order</button>
+    <div id="response"></div>
+</div>
+
+<script>
+    function generateRandomTransactionId() {
+        return 'TX' + Math.random().toString(36).substring(2, 15).toUpperCase();
+    }
+
+    function generateRandomAmount() {
+        return (Math.random() * 100).toFixed(2);
+    }
+
+    function generateRandomEmail() {
+        const timestamp = new Date().getTime();
+        return `user${timestamp}@example.com`;
+    }
+
+    // Define the default JSON data with random values
+    function getDefaultData() {
+        return JSON.stringify({
+            "customer": {
+                "name": "John Doe",
+                "email": generateRandomEmail(),
+                "phoneNumber": "123-456-7890"
+            },
+            "items": [
+                {
+                    "productName": "Sample Item 1",
+                    "quantity": 1,
+                    "price": 19.99
+                },
+                {
+                    "productName": "Sample Item 2",
+                    "quantity": 2,
+                    "price": 29.99
+                }
+            ],
+            "shipping": {
+                "address": "123 Main St",
+                "city": "Anytown",
+                "postalCode": "12345",
+                "country": "USA"
+            },
+            "payment": {
+                "method": "Credit Card",
+                "transactionId": generateRandomTransactionId(),
+                "amount": generateRandomAmount()
+            },
+            "status": "Pending"
+        }, null, 2);
+    }
+
+    // Initialize Ace Editor with default data
+    const editor = ace.edit("editor");
+    editor.setTheme("ace/theme/github");
+    editor.session.setMode("ace/mode/json");
+    editor.setValue(getDefaultData(), -1);
+
+    function submitOrder() {
+        const orderData = editor.getValue();
+        console.log("Submitting order:", orderData);
+
+        let jsonData;
+        try {
+            jsonData = JSON.parse(orderData);
+        } catch (e) {
+            alert('Invalid JSON format');
+            return;
+        }
+
+        fetch('http://localhost:8081/api/orders-contracts/process', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(jsonData),
+        })
+        .then(response => {
+            console.log("Response Status:", response.status);
+            if (!response.ok) {
+                return response.text().then(text => { throw new Error(text); });
+            }
+            return response.text();
+        })
+        .then(data => {
+            document.getElementById('response').innerText = 'Order submitted successfully: ' + data;
+            console.log('Response Data:', data);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            document.getElementById('response').innerText = 'Error submitting order: ' + error.message;
+        });
+    }
+</script>
+</body>
+</html>

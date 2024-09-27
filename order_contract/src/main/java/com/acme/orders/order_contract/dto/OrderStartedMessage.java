@@ -10,7 +10,7 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ShipOrderMessage implements Serializable {
+public class OrderStartedMessage implements Serializable {
     private UUID orderUid;
     private String shippingInfo;
     private String key;
