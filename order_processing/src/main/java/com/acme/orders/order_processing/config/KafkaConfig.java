@@ -1,5 +1,6 @@
 package com.acme.orders.order_processing.config;
 
+import com.acme.orders.order_contract.dto.OrderStartedMessage;
 import com.acme.orders.order_contract.dto.ShipOrderMessage;
 import com.acme.orders.order_processing.dto.IncomingOrder;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -26,7 +27,7 @@ public class KafkaConfig
     private Environment env;
 
     @Bean
-    public ConsumerFactory<String, IncomingOrder> consumerFactory() {
+    public ConsumerFactory<String, OrderStartedMessage> consumerFactory() {
         Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, env.getProperty("spring.kafka.bootstrap-servers"));
         props.put(ConsumerConfig.GROUP_ID_CONFIG, env.getProperty("spring.kafka.consumer.group-id", "default_group_id"));
@@ -60,8 +61,8 @@ public class KafkaConfig
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, IncomingOrder> kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, IncomingOrder> factory = new ConcurrentKafkaListenerContainerFactory<>();
+    public ConcurrentKafkaListenerContainerFactory<String, OrderStartedMessage> kafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, OrderStartedMessage> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
         factory.setConcurrency(30);
         return factory;

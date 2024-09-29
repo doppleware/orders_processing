@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: order_contract
+  kafka:
+    bootstrap-servers: localhost:9092
+    properties:
+      schema.registry.url: http://schema-registry:8081
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+  sql:
+    init:
+      schema-locations: classpath*:db/postgres/schema.sql
+      mode: always
+  datasource:
+    url: ${POSTGRES_URL:jdbc:postgresql://localhost/postgres}
+    username: ${POSTGRES_USER:postgres}
+    password: ${POSTGRES_PASS:postgres}
+
+server:
+  port: 8089
+
+logging:
+  level:
+    org:
+      springframework:
+        kafka: DEBUG

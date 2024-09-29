@@ -32,7 +32,7 @@ public class ApprovalApiFacade implements ApprovalApi{
         Span span = Span.current();
         span.setAttribute("Some Key", "Som value");
 
-        var orderApproval = makeHttpCall(ORDERS_APPROVAL_URL + ORDER_APPROVAL_PATH +  id);
+        String orderApproval = makeHttpCall(ORDERS_APPROVAL_URL + ORDER_APPROVAL_PATH +  id);
 
         try {
             JSONObject obj = new JSONObject(orderApproval);

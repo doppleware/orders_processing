@@ -1,0 +1,67 @@
+services:
+  order-contract-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    depends_on:
+      - order-contract-db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://order-contract-db:5432/postgres
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+
+  kafka-1:
+    image: 'bitnami/kafka:3.3.1'
+    container_name: kafka-1
+    platform: linux/amd64  # Ensure the correct platform
+    environment:
+      KAFKA_ENABLE_KRAFT: 'yes'
+      KAFKA_CFG_PROCESS_ROLES: 'broker,controller'
+      KAFKA_CFG_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
+      KAFKA_CFG_LISTENERS: 'PLAINTEXT://:9092,CONTROLLER://:9094'
+      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT'
+      KAFKA_CFG_BROKER_ID: 1
+      KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: '1@kafka-1:9094'
+      KAFKA_CFG_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka-1:9092'
+      ALLOW_PLAINTEXT_LISTENER: 'yes'
+      KAFKA_KRAFT_CLUSTER_ID: 'r4zt_wrqTRuT7W2NJsB_GA'
+    ports:
+      - "9192:9092"
+      - "9194:9094"
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    depends_on:
+      - kafka-1
+    ports:
+      - "8082:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka-1:9092
+      KAFKA_CLUSTERS_0_SCHEMAREGISTRY: http://schema-registry:8081
+
+  order-contract-db:
+    image: postgres
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+
+  pgadmin1:
+    image: dpage/pgadmin4
+    ports:
+      - "8083:80"
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=SuperSecret
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+      - ./pgadmin_data/servers.json:/pgadmin4/servers.json
+    depends_on:
+      - order-contract-db
+
+volumes:
+  postgres_data:
+  pgadmin_data:

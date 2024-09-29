@@ -1,9 +1,12 @@
 package com.acme.orders.order_processing;
 import com.acme.orders.order_contract.config.Constants;
+import com.acme.orders.order_contract.dto.OrderStartedMessage;
 import com.acme.orders.order_contract.dto.ShipOrderMessage;
+import com.acme.orders.order_processing.domain.BillingRecord;
 import com.acme.orders.order_processing.domain.OrderRecord;
 import com.acme.orders.order_processing.domain.OrdersRepository;
 import com.acme.orders.order_processing.dto.IncomingOrder;
+import com.acme.orders.order_processing.dto.OrderApprovalRecord;
 import com.acme.orders.order_processing.external_api.ApprovalApi;
 import com.acme.orders.order_processing.model.OrderInTransit;
 import com.acme.orders.order_processing.security.HashProcessorBean;
@@ -19,6 +22,8 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.UUID;
+
+import static com.acme.orders.order_contract.config.Constants.ORDER_CONTRACT_STARTED_TOPIC;
 
 
 @Component
@@ -39,34 +44,34 @@ public class OrderProcessor {
     @Autowired
     private KafkaTemplate<String, ShipOrderMessage> kafkaTemplate;
 
-    @KafkaListener(topics = "incomingOrders")
+    @KafkaListener(topics = ORDER_CONTRACT_STARTED_TOPIC)
     @Transactional
-    public void processMessage(IncomingOrder order) {
+    public void processMessage(OrderStartedMessage order) {
 
         Pageable pageable = PageRequest.of(0, 100);
-        String hashValue = hasProcessor.processHash(order.getValue());
-        var orders = ordersRepo.findByName("");
-        var billingEntities = new ArrayList< String >();
-        for (var orderInstance: orders){
-            var billingRecords = orderInstance.getBillingRecords();
+        String hashValue = hasProcessor.processHash(order.getKey());
+        OrderRecord[] orders = ordersRepo.findByName(order.getKey());
+        ArrayList<String> billingEntities = new ArrayList< String >();
+        for (OrderRecord orderInstance: orders){
+            java.util.List<com.acme.orders.order_processing.domain.BillingRecord> billingRecords = orderInstance.getBillingRecords();
 
-            for (var billingRecord : billingRecords){
+            for (BillingRecord billingRecord : billingRecords){
                 billingEntities.add(billingRecord.getEntity().getName());
                 System.out.println(billingRecord.getEntity().getName());
             }
         }
         System.out.println(order.toString());
-        var orderIT = new OrderInTransit(order.getKey(),"",hashValue,"","","", false);
+        OrderInTransit orderIT = new OrderInTransit(order.getKey(),"",hashValue,"","","", false);
         String[] fields = {"id", "orderTitle"};
-        var results = inTransitRepo.searchSimilar(orderIT,fields,pageable);
-        for (var result: results){
+        org.springframework.data.domain.Page<OrderInTransit> results = inTransitRepo.searchSimilar(orderIT,fields,pageable);
+        for (OrderInTransit result: results){
             if (result.getId()==order.getKey()){
                 orderIT.setApproved(true);
 
             }
         }
         try {
-            var approval = approvalApi.getApproval(order.getKey());
+            OrderApprovalRecord approval = approvalApi.getApproval(order.getKey());
             if (approval!=null && approval.isApproved())
             {
                 orderIT.setApproved(true);
@@ -79,7 +84,7 @@ public class OrderProcessor {
 
 
         inTransitRepo.save(orderIT);
-        for (var entity : billingEntities){
+        for (String entity : billingEntities){
             OrderRecord orderRecord = new OrderRecord();
             orderRecord.setName(entity);
             ordersRepo.save(orderRecord);
