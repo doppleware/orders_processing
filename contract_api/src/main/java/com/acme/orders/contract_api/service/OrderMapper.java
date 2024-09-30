@@ -5,15 +5,17 @@ import com.acme.orders.contract_api.entity.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
 public class OrderMapper {
-    public OrderContract toOrder(OrderRequest orderRequest) {
+    public OrderContract toOrder(OrderRequest orderRequest, UUID orderUid) {
         OrderContract order = new OrderContract();
         order.setCustomer(toCustomer(orderRequest.getCustomer()));
         order.setItems(toItems(orderRequest.getItems()));
         order.setShipping(toShipping(orderRequest.getShipping()));
+        order.setUuid(orderUid);
         order.setPayment(toPayment(orderRequest.getPayment()));
         order.setStatus(orderRequest.getStatus());
         return order;

@@ -1,4 +1,4 @@
-curl -X POST http://localhost:8081/api/orders-contracts/process \
+curl -X POST http://localhost:8089/api/orders-contracts/process \
      -H "Content-Type: application/json" \
      -d '{
            "customer": {

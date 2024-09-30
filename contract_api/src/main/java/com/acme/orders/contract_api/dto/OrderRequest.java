@@ -19,4 +19,6 @@ public class OrderRequest {
     private Shipping shipping;
     private Payment payment;
     private String status;
+    private String orderName;
+
 }

@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
@@ -32,5 +33,10 @@ public class OrderContract {
     @JoinColumn(name = "payment_id")
     private Payment payment;
 
+    private UUID orderUid;
     private String status;
+
+    public void setUuid(UUID orderUid) {
+        this.orderUid=orderUid;
+    }
 }

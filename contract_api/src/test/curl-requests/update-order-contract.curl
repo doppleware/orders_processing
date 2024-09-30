@@ -1,4 +1,4 @@
-curl -X PUT http://localhost:8081/api/orders-contracts/1 \
+curl -X PUT http://localhost:8089/api/orders-contracts/1 \
 -H "Content-Type: application/json" \
 -d '{
     "customer": {

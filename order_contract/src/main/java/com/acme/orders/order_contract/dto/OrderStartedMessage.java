@@ -14,4 +14,5 @@ public class OrderStartedMessage implements Serializable {
     private UUID orderUid;
     private String shippingInfo;
     private String key;
+    private String orderName;
 }

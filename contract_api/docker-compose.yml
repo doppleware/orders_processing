@@ -7,10 +7,6 @@ services:
       - "8081:8081"
     depends_on:
       - order-contract-db
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://order-contract-db:5432/postgres
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=postgres
 
   kafka-1:
     image: 'bitnami/kafka:3.3.1'

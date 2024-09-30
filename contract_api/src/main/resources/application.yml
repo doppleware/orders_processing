@@ -13,7 +13,7 @@ spring:
       schema-locations: classpath*:db/postgres/schema.sql
       mode: always
   datasource:
-    url: ${POSTGRES_URL:jdbc:postgresql://localhost/postgres}
+    url: ${POSTGRES_URL:jdbc:postgresql://localhost:5435/postgres}
     username: ${POSTGRES_USER:postgres}
     password: ${POSTGRES_PASS:postgres}
 

@@ -8,14 +8,6 @@ spring:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-  sql:
-    init:
-      schema-locations: classpath*:db/postgres/schema.sql
-      mode: always
-  datasource:
-    url: ${POSTGRES_URL:jdbc:postgresql://localhost/postgres}
-    username: ${POSTGRES_USER:postgres}
-    password: ${POSTGRES_PASS:postgres}
 
 server:
   port: 8089

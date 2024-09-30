@@ -11,6 +11,7 @@ import com.acme.orders.order_processing.external_api.ApprovalApi;
 import com.acme.orders.order_processing.model.OrderInTransit;
 import com.acme.orders.order_processing.security.HashProcessorBean;
 import jakarta.transaction.Transactional;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -50,16 +51,7 @@ public class OrderProcessor {
 
         Pageable pageable = PageRequest.of(0, 100);
         String hashValue = hasProcessor.processHash(order.getKey());
-        OrderRecord[] orders = ordersRepo.findByName(order.getKey());
-        ArrayList<String> billingEntities = new ArrayList< String >();
-        for (OrderRecord orderInstance: orders){
-            java.util.List<com.acme.orders.order_processing.domain.BillingRecord> billingRecords = orderInstance.getBillingRecords();
-
-            for (BillingRecord billingRecord : billingRecords){
-                billingEntities.add(billingRecord.getEntity().getName());
-                System.out.println(billingRecord.getEntity().getName());
-            }
-        }
+        ArrayList<String> billingEntities = getOrders(order);
         System.out.println(order.toString());
         OrderInTransit orderIT = new OrderInTransit(order.getKey(),"",hashValue,"","","", false);
         String[] fields = {"id", "orderTitle"};
@@ -97,5 +89,20 @@ public class OrderProcessor {
         shipOrderMessage.setShippingInfo("");
         kafkaTemplate.send(Constants.SHIPPING_TOPIC, shipOrderMessage);
 
+    }
+
+    @NotNull
+    private ArrayList<String> getOrders(OrderStartedMessage order) {
+        OrderRecord[] orders = ordersRepo.findByName(order.getOrderName());
+        ArrayList<String> billingEntities = new ArrayList< String >();
+        for (OrderRecord orderInstance: orders){
+            var billingRecords = orderInstance.getBillingRecords();
+
+            for (var billingRecord : billingRecords){
+                billingEntities.add(billingRecord.getEntity().getName());
+                System.out.println(billingRecord.getEntity().getName());
+            }
+        }
+        return billingEntities;
     }
 }

@@ -79,8 +79,11 @@ public class OrderContractService {
         if (existingCustomer != null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email address already exists");
         }
-        OrderContract orderContract = orderRepository.save(orderMapper.toOrder(orderRequest));
+
         UUID orderUid = UUID.randomUUID();
+
+        var order = orderMapper.toOrder(orderRequest, orderUid);
+        var orderContract = orderRepository.save(order);
 
         String shippingInfo = orderRequest.getShipping().getAddress();
         String key = "order-" + orderUid;
@@ -88,6 +91,7 @@ public class OrderContractService {
         OrderStartedMessage orderStartedMessage = new OrderStartedMessage();
         orderStartedMessage.setOrderUid(orderUid);
         orderStartedMessage.setShippingInfo(shippingInfo);
+        orderStartedMessage.setOrderName(orderRequest.getOrderName());
         orderStartedMessage.setKey(key);
 
         // Send the message to Kafka
