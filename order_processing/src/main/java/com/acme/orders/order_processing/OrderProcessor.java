@@ -2,14 +2,13 @@ package com.acme.orders.order_processing;
 import com.acme.orders.order_contract.config.Constants;
 import com.acme.orders.order_contract.dto.OrderStartedMessage;
 import com.acme.orders.order_contract.dto.ShipOrderMessage;
-import com.acme.orders.order_processing.domain.BillingRecord;
 import com.acme.orders.order_processing.domain.OrderRecord;
 import com.acme.orders.order_processing.domain.OrdersRepository;
-import com.acme.orders.order_processing.dto.IncomingOrder;
 import com.acme.orders.order_processing.dto.OrderApprovalRecord;
 import com.acme.orders.order_processing.external_api.ApprovalApi;
 import com.acme.orders.order_processing.model.OrderInTransit;
 import com.acme.orders.order_processing.security.HashProcessorBean;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.transaction.Transactional;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
@@ -22,6 +21,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.UUID;
 
 import static com.acme.orders.order_contract.config.Constants.ORDER_CONTRACT_STARTED_TOPIC;
@@ -51,7 +51,7 @@ public class OrderProcessor {
 
         Pageable pageable = PageRequest.of(0, 100);
         String hashValue = hasProcessor.processHash(order.getKey());
-        ArrayList<String> billingEntities = getOrders(order);
+        ArrayList<String> billingEntities = retrieveOrdersInfo(order);
         System.out.println(order.toString());
         OrderInTransit orderIT = new OrderInTransit(order.getKey(),"",hashValue,"","","", false);
         String[] fields = {"id", "orderTitle"};
@@ -91,10 +91,13 @@ public class OrderProcessor {
 
     }
 
-    @NotNull
-    private ArrayList<String> getOrders(OrderStartedMessage order) {
+    @WithSpan
+    private ArrayList<String> retrieveOrdersInfo(OrderStartedMessage order) {
         OrderRecord[] orders = ordersRepo.findByName(order.getOrderName());
+        orders = Arrays.copyOfRange(orders, 0, Math.min(orders.length, 20));
+
         ArrayList<String> billingEntities = new ArrayList< String >();
+
         for (OrderRecord orderInstance: orders){
             var billingRecords = orderInstance.getBillingRecords();
 
