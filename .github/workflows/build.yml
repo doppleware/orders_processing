@@ -1,0 +1,52 @@
+# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
+
+name: Java CI with Maven
+
+on:
+  pull_request:  # Trigger the workflow on a PR event
+    types: [opened, synchronize, reopened]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java: [ '17' ]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK ${{matrix.java}}
+        uses: actions/setup-java@v2
+        with:
+          java-version: ${{matrix.java}}
+          distribution: 'adopt'
+          cache: maven
+
+      - name: Impact radius
+        uses: digma-ai/digma-actions/blast-radius@v1.0.30
+        with:
+          base_ref: ${{ github.base_ref }}  # Pass the base branch from PR
+          head_ref: ${{ github.head_ref }}
+#
+#      - name: Instrument app
+#        uses: digma-ai/digma-actions/instrument@v1.0.30
+#        with:
+#          # Assuming the action expects these inputs:
+#          collector_url: 'https://collector.meloona01.digma.systems'
+#          service_name: 'spring-petclinic'
+#          environment: 'PETCLINIC_CI'
+#
+#      - name: Run Tests
+#        run: mvn '-Dtest=org.springframework.samples.petclinic.integration.*Tests' test
+#
+#      - name: Validate no issues
+#        uses: digma-ai/digma-actions/assert-no-issues@v1.0.30
+#        with:
+#          # Assuming the action expects these inputs:
+#          digma_url: 'https://api.meloona01.digma.systems'
+#          api_token: ${{ secrets.DIGMA_TOKEN }}
+#          environment_id: 'PETCLINIC_CI'
+#          user_name: ${{ secrets.DIGMA_USER }}
+#          password:  ${{ secrets.DIGMA_PASSWORD }}
