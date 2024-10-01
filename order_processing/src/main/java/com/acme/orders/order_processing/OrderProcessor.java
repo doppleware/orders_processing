@@ -94,7 +94,7 @@ public class OrderProcessor {
     @WithSpan
     private ArrayList<String> retrieveOrdersInfo(OrderStartedMessage order) {
         OrderRecord[] orders = ordersRepo.findByName(order.getOrderName());
-        orders = Arrays.copyOfRange(orders, 0, Math.min(orders.length, 20));
+        orders = Arrays.copyOfRange(orders, 0, Math.min(orders.length, 30));
 
         ArrayList<String> billingEntities = new ArrayList< String >();
 
