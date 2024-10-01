@@ -25,15 +25,17 @@ jobs:
           cache: maven
 
       - name: Impact radius
-        uses: digma-ai/digma-actions/blast-radius@v1.0.33
+        uses: digma-ai/digma-actions/blast-radius@v1.0.35
         with:
           base_ref: ${{ github.base_ref }}  # Pass the base branch from PR
           head_ref: ${{ github.head_ref }}
           verbose: 'true'
-#
-#      - name: Instrument app
-#        uses: digma-ai/digma-actions/instrument@v1.0.30
-#        with:
+          username: ${{ secrets.DIGMA_USER }}
+          password: ${{ secrets.DIGMA_PASSWORD }}
+          api_token: ''
+          environment: 'CI#ID#92ED3B9B-DC38-4581-8B61-32D5D5AF99BF'
+          digma_url: 'https://34.89.9.177:5051'
+
 #          # Assuming the action expects these inputs:
 #          collector_url: 'https://collector.meloona01.digma.systems'
 #          service_name: 'spring-petclinic'
