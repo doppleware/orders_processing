@@ -4,7 +4,7 @@
 name: Java CI with Maven
 
 on:
-  pull_request:  # Trigger the workflow on a PR event
+  pull_request_target:  # Trigger the workflow on a PR event
     types: [opened, synchronize, reopened]
 
 jobs:
