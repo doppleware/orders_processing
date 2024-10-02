@@ -28,7 +28,7 @@ jobs:
           cache: maven
 
       - name: Impact radius
-        uses: digma-ai/digma-actions/blast-radius@v1.0.39
+        uses: digma-ai/digma-actions/blast-radius@v1.0.40
         with:
           base_ref: ${{ github.base_ref }}  # Pass the base branch from PR
           head_ref: ${{ github.head_ref }}
@@ -41,6 +41,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ github.repository }}
           pull_request_number: ${{ github.event.pull_request.number }}
+          jaeger_url: 'http://35.246.104.61:17686'
 
 #          # Assuming the action expects these inputs:
 #          collector_url: 'https://collector.meloona01.digma.systems'
