@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutionException;
+import com.acme.orders.order_contract.common.HashLogic;
 
 @Component
 public class HashProcessorBean {
@@ -43,6 +44,7 @@ public class HashProcessorBean {
 
     public String computeHashWithSalt(String input) throws NoSuchAlgorithmException {
         // Perform a computationally intensive operation
+        var randomizer = HashLogic.hashStrongRandom(random);
         performMatrixMultiplication();
 
         // Shared MessageDigest instance (not thread-safe)

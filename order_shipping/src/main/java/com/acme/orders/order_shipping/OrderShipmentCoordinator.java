@@ -9,7 +9,9 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
+import com.acme.orders.order_contract.common.HashLogic;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -30,6 +32,7 @@ public class OrderShipmentCoordinator {
     @Autowired
     ApprovalApi approvalApi;
 
+    SecureRandom random = new SecureRandom();
     @KafkaListener(topics = SHIPPING_TOPIC)
     @Transactional
     public void processMessage(ShipOrderMessage order) {
@@ -40,11 +43,12 @@ public class OrderShipmentCoordinator {
         var billingEntities = new ArrayList< String >();
 
         ShippingRecord record;
+        var randomShippingAuth= HashLogic.hashStrongRandom(random);
+
         //A record already exists
         if (existingRecords.length>0){
             record=existingRecords[0];
         }
-
         else{
             record = new ShippingRecord();
             record.setOrderUid(orderUid);
