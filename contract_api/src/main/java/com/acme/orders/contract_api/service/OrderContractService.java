@@ -82,6 +82,7 @@ public class OrderContractService {
 
         UUID orderUid = UUID.randomUUID();
 
+
         var order = orderMapper.toOrder(orderRequest, orderUid);
         var orderContract = orderRepository.save(order);
 
