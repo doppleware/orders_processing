@@ -11,6 +11,11 @@ public class HashLogic {
         double[][] matrixB = new double[size][size];
         double[][] result = new double[size][size];
 
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         // Initialize matrices with random values
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
