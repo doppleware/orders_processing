@@ -19,8 +19,10 @@ CREATE TABLE IF NOT EXISTS shipping (
     postal_code VARCHAR(20),
     country VARCHAR(50)
 );
+
 CREATE TABLE IF NOT EXISTS order_contract (
     id SERIAL PRIMARY KEY,
+    order_uid UUID UNIQUE,
     customer_id BIGINT,
     shipping_id BIGINT,
     payment_id BIGINT,

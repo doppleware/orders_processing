@@ -1,1 +1,0 @@
-curl -X DELETE http://localhost:8081/api/orders-contracts/{id}
