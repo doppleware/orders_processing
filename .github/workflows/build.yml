@@ -41,7 +41,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ github.repository }}
           pull_request_number: ${{ github.event.pull_request.number }}
-          jaeger_url: 'http://35.246.104.61:17686'
+          jaeger_url: 'http://35.189.120.141:17686'
 
 #          # Assuming the action expects these inputs:
 #          collector_url: 'https://collector.meloona01.digma.systems'
