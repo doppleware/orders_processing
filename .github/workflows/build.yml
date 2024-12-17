@@ -37,7 +37,7 @@ jobs:
           password: ${{ secrets.DIGMA_PASSWORD }}
           api_token: ''
           environment: 'CI#ID#92ED3B9B-DC38-4581-8B61-32D5D5AF99BF'
-          digma_url: 'https://34.89.9.177:5051'
+          digma_url: 'https://35.246.105.142:5051'
           github_token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ github.repository }}
           pull_request_number: ${{ github.event.pull_request.number }}
