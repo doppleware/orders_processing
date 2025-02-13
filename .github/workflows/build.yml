@@ -36,12 +36,12 @@ jobs:
           username: ${{ secrets.DIGMA_USER }}
           password: ${{ secrets.DIGMA_PASSWORD }}
           api_token: ''
-          environment: 'TESTING#ID#8A7D1707-2B82-49B4-95A9-A8FFB8211A95'
-          digma_url: 'https://34.105.186.183:5051'
+          environment: 'INTEGRATION#ID#04F362E8-F3E6-48E3-8CC8-A4496AC24E87'
+          digma_url: 'https://sandbox.api.prod.digma.systems'
           github_token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ github.repository }}
           pull_request_number: ${{ github.event.pull_request.number }}
-          jaeger_url: 'http://34.89.110.165:16686'
+          jaeger_url: 'https://sandbox.ui.prod.digma.systems/jaeger'
 
 #          # Assuming the action expects these inputs:
 #          collector_url: 'https://collector.meloona01.digma.systems'
