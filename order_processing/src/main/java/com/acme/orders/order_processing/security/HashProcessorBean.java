@@ -56,13 +56,6 @@ public class HashProcessorBean {
             random.nextBytes(salt);
         }
 
-        // Synchronized block to modify large data structure
-        synchronized (largeDataStructure) {
-            largeDataStructure.add(salt);
-            if (largeDataStructure.size() > 100) {
-                largeDataStructure.clear();
-            }
-        }
 
         // Synchronized block to enforce serial access to the shared resource
         synchronized (digest) {

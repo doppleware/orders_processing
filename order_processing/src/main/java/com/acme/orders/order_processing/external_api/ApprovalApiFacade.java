@@ -31,7 +31,11 @@ public class ApprovalApiFacade implements ApprovalApi{
 
         Span span = Span.current();
         span.setAttribute("Some Key", "Som value");
-
+        try {
+            Thread.sleep(300);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         String orderApproval = makeHttpCall(ORDERS_APPROVAL_URL + ORDER_APPROVAL_PATH +  id);
 
         try {

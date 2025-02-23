@@ -1,8 +1,10 @@
 package com.acme.orders.order_contract.common;
+import java.util.concurrent.locks.ReentrantLock;
 
 import java.security.SecureRandom;
 
 public class HashLogic {
+    private static final ReentrantLock lock = new ReentrantLock();
 
     public static double  hashStrongRandom(SecureRandom random) {
         // Create two large matrices for multiplication
@@ -11,11 +13,7 @@ public class HashLogic {
         double[][] matrixB = new double[size][size];
         double[][] result = new double[size][size];
 
-        try {
-            Thread.sleep(200);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        lockRandomizer();
         // Initialize matrices with random values
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
@@ -34,8 +32,22 @@ public class HashLogic {
             }
         }
 
+
         return result[random.nextInt(size)][random.nextInt(size)];
 
         // Print a part of the result to ensure computation
+    }
+
+    private static void lockRandomizer() {
+        lock.lock();
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        finally {
+            lock.unlock();
+
+        }
     }
 }

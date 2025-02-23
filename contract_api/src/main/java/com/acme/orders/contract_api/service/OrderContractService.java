@@ -34,6 +34,10 @@ public class OrderContractService {
     @Autowired
     private OrderMapper orderMapper;
 
+    private static final Object lockedObject = new Object();
+
+    private static final Object assessLockedObject = new Object();
+
     public void sendShipOrderMessage(OrderStartedMessage message) {
         kafkaTemplate.send(ORDER_CONTRACT_STARTED_TOPIC, message);
     }
@@ -72,6 +76,71 @@ public class OrderContractService {
 
     public void deleteContract(Long id) {
         orderRepository.deleteById(id);
+    }
+
+    public Boolean contractValidationLogic(OrderContract contract){
+        synchronized(lockedObject) {
+            try {
+                Thread.sleep(400);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return true;
+    }
+    public Boolean validateOrderContract(OrderRequest orderRequest) {
+
+        Customer existingCustomer = customerRepository.findByEmail(orderRequest.getCustomer().getEmail());
+
+        UUID orderUid = UUID.randomUUID();
+
+        var order = orderMapper.toOrder(orderRequest, orderUid);
+        var orderContract = orderRepository.save(order);
+        contractValidationLogic(orderContract);
+        String shippingInfo = orderRequest.getShipping().getAddress();
+        String key = "order-" + orderUid;
+
+        OrderStartedMessage orderStartedMessage = new OrderStartedMessage();
+        orderStartedMessage.setOrderUid(orderUid);
+        orderStartedMessage.setShippingInfo(shippingInfo);
+        orderStartedMessage.setOrderName(orderRequest.getOrderName());
+        orderStartedMessage.setKey(key);
+
+        // Send the message to Kafka
+        return orderContract.getId()!=null;
+    }
+
+    public Boolean assessOrderContract(OrderRequest orderRequest) {
+
+        Customer existingCustomer = customerRepository.findByEmail(orderRequest.getCustomer().getEmail());
+
+        UUID orderUid = UUID.randomUUID();
+
+        var order = orderMapper.toOrder(orderRequest, orderUid);
+        var orderContract = orderRepository.save(order);
+        contractAssessment(orderContract);
+        String shippingInfo = orderRequest.getShipping().getAddress();
+        String key = "order-" + orderUid;
+
+        OrderStartedMessage orderStartedMessage = new OrderStartedMessage();
+        orderStartedMessage.setOrderUid(orderUid);
+        orderStartedMessage.setShippingInfo(shippingInfo);
+        orderStartedMessage.setOrderName(orderRequest.getOrderName());
+        orderStartedMessage.setKey(key);
+
+        // Send the message to Kafka
+        return orderContract.getId()!=null;
+    }
+
+    public Boolean contractAssessment(OrderContract contract){
+        synchronized(assessLockedObject) {
+            try {
+                Thread.sleep(400);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return true;
     }
 
     public Long createOrderContract(OrderRequest orderRequest) {
