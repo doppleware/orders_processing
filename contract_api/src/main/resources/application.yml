@@ -2,7 +2,7 @@ spring:
   application:
     name: order_contract
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: kafka-demo-24927.germanywestcentral.azurecontainer.io:9092
     properties:
       schema.registry.url: http://schema-registry:8081
     producer:
@@ -13,7 +13,7 @@ spring:
       schema-locations: classpath*:db/postgres/schema.sql
       mode: always
   datasource:
-    url: ${POSTGRES_URL:jdbc:postgresql://localhost:5435/postgres}
+    url: ${POSTGRES_URL:jdbc:postgresql://demo-app-pg.postgres.database.azure.com:5432/postgres}
     username: ${POSTGRES_USER:postgres}
     password: ${POSTGRES_PASS:postgres}
 

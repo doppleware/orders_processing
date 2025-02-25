@@ -66,35 +66,6 @@ public class OrderContractController {
     }
 
 
-    @PostMapping("/validate")
-    @CrossOrigin(origins = "http://localhost:63342")
-    public ResponseEntity<String> validateContract(@RequestBody OrderRequest orderRequest) {
-        logger.info("Received request to create order contract: {}", orderRequest);
-        try {
-            Boolean validation = service.validateOrderContract(orderRequest);
-            return ResponseEntity.ok("Order contract validated successfully ");
-        } catch (Exception e) {
-            logger.error("Error processing order contract: {}", e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error processing order contract: " + e.getMessage());
-        }
-    }
-
-
-    @PostMapping("/assess")
-    @CrossOrigin(origins = "http://localhost:63342")
-    public ResponseEntity<String> assessContract(@RequestBody OrderRequest orderRequest) {
-        logger.info("Received request to create order contract: {}", orderRequest);
-        try {
-            Boolean validation = service.assessOrderContract(orderRequest);
-            return ResponseEntity.ok("Order contract validated successfully ");
-        } catch (Exception e) {
-            logger.error("Error processing order contract: {}", e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error processing order contract: " + e.getMessage());
-        }
-    }
-
     @PostMapping("/process")
     @CrossOrigin(origins = "http://localhost:63342")
     public ResponseEntity<String> createOrderContract(@RequestBody OrderRequest orderRequest) {
