@@ -41,7 +41,7 @@ public class HashLogic {
     private static void lockRandomizer() {
         lock.lock();
         try {
-            Thread.sleep(500);
+            Thread.sleep(200);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }

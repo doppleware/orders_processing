@@ -5,6 +5,7 @@ import com.acme.orders.contract_api.dto.UpdateOrderRequest;
 import com.acme.orders.contract_api.entity.OrderContract;
 import com.acme.orders.contract_api.service.OrderContractService;
 import com.acme.orders.order_contract.common.HashLogic;
+import com.acme.orders.order_contract.seed.SeedManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,12 @@ public class OrderContractController {
             logger.warn("Order contract with id {} not found", id);
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping("/seed")
+    public void seed() {
+        SeedManager seedManager = new SeedManager();
+
     }
 
     @PutMapping("/{id}")
