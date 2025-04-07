@@ -37,6 +37,10 @@ services:
       KAFKA_CLUSTERS_0_NAME: local
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka-1:9092
       KAFKA_CLUSTERS_0_SCHEMAREGISTRY: http://schema-registry:8081
+      KAFKA_CLUSTERS_1_NAME: remote
+      KAFKA_CLUSTERS_1_BOOTSTRAPSERVERS: 20.170.100.45:9092
+      KAFKA_CLUSTERS_1_SCHEMAREGISTRY: http://schema-registry:8081
+
 
   order-contract-db:
     image: postgres

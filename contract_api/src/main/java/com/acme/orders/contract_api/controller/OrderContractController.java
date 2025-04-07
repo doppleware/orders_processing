@@ -4,6 +4,8 @@ import com.acme.orders.contract_api.dto.OrderRequest;
 import com.acme.orders.contract_api.dto.UpdateOrderRequest;
 import com.acme.orders.contract_api.entity.OrderContract;
 import com.acme.orders.contract_api.service.OrderContractService;
+import com.acme.orders.order_contract.common.HashLogic;
+import com.acme.orders.order_contract.seed.SeedManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,12 +13,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.SecureRandom;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/orders-contracts")
 public class OrderContractController {
     private static final Logger logger = LoggerFactory.getLogger(OrderContractController.class);
+    private final SecureRandom random = new SecureRandom();
 
     @Autowired
     private OrderContractService service;
@@ -33,6 +37,12 @@ public class OrderContractController {
             logger.warn("Order contract with id {} not found", id);
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping("/seed")
+    public void seed() {
+        SeedManager seedManager = new SeedManager();
+
     }
 
     @PutMapping("/{id}")
@@ -62,14 +72,47 @@ public class OrderContractController {
         }
     }
 
+
     @PostMapping("/process")
     @CrossOrigin(origins = "http://localhost:63342")
     public ResponseEntity<String> createOrderContract(@RequestBody OrderRequest orderRequest) {
         logger.info("Received request to create order contract: {}", orderRequest);
         try {
             Long orderId = service.createOrderContract(orderRequest);
+            HashLogic.hashStrongRandom(random);
             logger.info("Order contract created successfully with ID: {}", orderId);
             return ResponseEntity.ok("Order contract created successfully with Id: " + orderId);
+        } catch (Exception e) {
+            logger.error("Error processing order contract: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error processing order contract: " + e.getMessage());
+        }
+    }
+
+
+
+    @PostMapping("/validate")
+    @CrossOrigin(origins = "http://localhost:63342")
+    public ResponseEntity<String> validateContract(@RequestBody OrderRequest orderRequest) {
+        logger.info("Received request to create order contract: {}", orderRequest);
+        try {
+            Boolean validation = service.validateOrderContract(orderRequest);
+            return ResponseEntity.ok("Order contract validated successfully ");
+        } catch (Exception e) {
+            logger.error("Error processing order contract: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error processing order contract: " + e.getMessage());
+        }
+    }
+
+
+    @PostMapping("/assess")
+    @CrossOrigin(origins = "http://localhost:63342")
+    public ResponseEntity<String> assessContract(@RequestBody OrderRequest orderRequest) {
+        logger.info("Received request to create order contract: {}", orderRequest);
+        try {
+            Boolean validation = service.assessOrderContract(orderRequest);
+            return ResponseEntity.ok("Order contract validated successfully ");
         } catch (Exception e) {
             logger.error("Error processing order contract: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

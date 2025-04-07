@@ -6,11 +6,9 @@ import com.acme.orders.order_processing.domain.OrderRecord;
 import com.acme.orders.order_processing.domain.OrdersRepository;
 import com.acme.orders.order_processing.dto.OrderApprovalRecord;
 import com.acme.orders.order_processing.external_api.ApprovalApi;
-import com.acme.orders.order_processing.model.OrderInTransit;
+//import com.acme.orders.order_processing.model.OrderInTransit;
 import com.acme.orders.order_processing.security.HashProcessorBean;
-import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.transaction.Transactional;
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -33,8 +31,7 @@ public class OrderProcessor {
     @Autowired
     private OrdersRepository ordersRepo;
 
-    @Autowired
-    private OrderInTransitRepository inTransitRepo;
+//@Autowired private OrderInTransitRepository inTransitRepo;
 
     @Autowired
     private HashProcessorBean hasProcessor;
@@ -53,29 +50,30 @@ public class OrderProcessor {
         String hashValue = hasProcessor.processHash(order.getKey());
         ArrayList<String> billingEntities = retrieveOrdersInfo(order);
         System.out.println(order.toString());
-        OrderInTransit orderIT = new OrderInTransit(order.getKey(),"",hashValue,"","","", false);
+        //OrderInTransit orderIT = new OrderInTransit(order.getKey(),"",hashValue,"","","", false);
         String[] fields = {"id", "orderTitle"};
-        org.springframework.data.domain.Page<OrderInTransit> results = inTransitRepo.searchSimilar(orderIT,fields,pageable);
-        for (OrderInTransit result: results){
-            if (result.getId()==order.getKey()){
-                orderIT.setApproved(true);
 
-            }
-        }
-        try {
-            OrderApprovalRecord approval = approvalApi.getApproval(order.getKey());
-            if (approval!=null && approval.isApproved())
-            {
-                orderIT.setApproved(true);
-            }
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        //org.springframework.data.domain.Page<OrderInTransit> results = inTransitRepo.searchSimilar(orderIT,fields,pageable);
+//        for (OrderInTransit result: results){
+//            if (result.getId()==order.getKey()){
+//                orderIT.setApproved(true);
+//
+//            }
+//        }
+//        try {
+//            OrderApprovalRecord approval = approvalApi.getApproval(order.getKey());
+//            if (approval!=null && approval.isApproved())
+//            {
+//                orderIT.setApproved(true);
+//            }
+//        } catch (JSONException e) {
+//            throw new RuntimeException(e);
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
 
 
-        inTransitRepo.save(orderIT);
+        //inTransitRepo.save(orderIT);
         for (String entity : billingEntities){
             OrderRecord orderRecord = new OrderRecord();
             orderRecord.setName(entity);
@@ -91,7 +89,6 @@ public class OrderProcessor {
 
     }
 
-    @WithSpan
     private ArrayList<String> retrieveOrdersInfo(OrderStartedMessage order) {
         OrderRecord[] orders = ordersRepo.findByName(order.getOrderName());
         orders = Arrays.copyOfRange(orders, 0, Math.min(orders.length, 30));

@@ -29,8 +29,6 @@ public class ApprovalApiFacade implements ApprovalApi{
     @Override
     public OrderApprovalRecord getApproval(String id) throws JSONException, IOException {
 
-        Span span = Span.current();
-        span.setAttribute("Some Key", "Som value");
 
         String orderApproval = makeHttpCall(ORDERS_APPROVAL_URL + ORDER_APPROVAL_PATH +  id);
 
