@@ -8,7 +8,7 @@ public class HashLogic {
 
     public static double  hashStrongRandom(SecureRandom random) {
         // Create two large matrices for multiplication
-        int size = 200; // Adjust size for increased load
+        int size = 300; // Adjust size for increased load
         double[][] matrixA = new double[size][size];
         double[][] matrixB = new double[size][size];
         double[][] result = new double[size][size];

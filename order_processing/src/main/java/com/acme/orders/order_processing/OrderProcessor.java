@@ -16,8 +16,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.IOException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.UUID;
@@ -42,6 +44,15 @@ public class OrderProcessor {
     @Autowired
     private KafkaTemplate<String, ShipOrderMessage> kafkaTemplate;
 
+    @Value("${spring.datasource.url}")
+    private String url;
+
+    @Value("${spring.datasource.username}")
+    private String username;
+
+    @Value("${spring.datasource.password}")
+    private String password;
+
     @KafkaListener(topics = ORDER_CONTRACT_STARTED_TOPIC)
     @Transactional
     public void processMessage(OrderStartedMessage order) {
@@ -49,6 +60,7 @@ public class OrderProcessor {
         Pageable pageable = PageRequest.of(0, 100);
         String hashValue = hasProcessor.processHash(order.getKey());
         ArrayList<String> billingEntities = retrieveOrdersInfo(order);
+        validateOrderRelationships();
         System.out.println(order.toString());
         //OrderInTransit orderIT = new OrderInTransit(order.getKey(),"",hashValue,"","","", false);
         String[] fields = {"id", "orderTitle"};
@@ -87,6 +99,49 @@ public class OrderProcessor {
         shipOrderMessage.setShippingInfo("");
         kafkaTemplate.send(Constants.SHIPPING_TOPIC, shipOrderMessage);
 
+    }
+
+
+
+    private void validateOrderRelationships() {
+
+
+        try (Connection conn = DriverManager.getConnection(url, username, password)) {
+
+            String sql = "SELECT\n" +
+                    "    oc.id AS order_id,\n" +
+                    "    c.name AS customer_name,\n" +
+                    "    c.email,\n" +
+                    "    s.city,\n" +
+                    "    p.method AS payment_method,\n" +
+                    "    p.amount AS payment_amount,\n" +
+                    "    oc.status,\n" +
+                    "    COUNT(oi.id) AS item_count,\n" +
+                    "    SUM(oi.price * oi.quantity) AS total_amount\n" +
+                    "FROM\n" +
+                    "    order_contract oc\n" +
+                    "JOIN customer c ON oc.customer_id = c.id\n" +
+                    "LEFT JOIN shipping s ON oc.shipping_id = s.id\n" +
+                    "LEFT JOIN payment p ON oc.payment_id = p.id\n" +
+                    "LEFT JOIN order_item oi ON oi.order_contract_id = oc.id\n" +
+                    "WHERE\n" +
+                    "    c.email ILIKE '%@gmail.com'\n" +
+                    "    AND oc.status <> 'Cancelled'\n" +
+                    "GROUP BY\n" +
+                    "    oc.id, c.name, c.email, s.city, p.method, p.amount, oc.status\n" +
+                    "ORDER BY\n" +
+                    "    total_amount DESC\n" +
+                    "LIMIT 200;";
+
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+
+                ResultSet result = ps.executeQuery();
+                conn.commit();
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     private ArrayList<String> retrieveOrdersInfo(OrderStartedMessage order) {
