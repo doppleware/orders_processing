@@ -36,7 +36,7 @@ jobs:
           username: ${{ secrets.DIGMA_USER }}
           password: ${{ secrets.DIGMA_PASSWORD }}
           api_token: ${{ secrets.DIGMA_TOKEN }}
-          environment: 'INTEGRATION#ID#04F362E8-F3E6-48E3-8CC8-A4496AC24E87'
+          environment: 'CI#ID#362B11DA-EC9A-4F90-8F9B-EAB277E9E234'
           digma_url: 'https://sandbox.api.prod.digma.systems'
           github_token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ github.repository }}
